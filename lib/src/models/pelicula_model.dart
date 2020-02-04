@@ -70,4 +70,12 @@ class Pelicula {
       return 'https://image.tmdb.org/t/p/w500/$posterPath';
     }
   }
+
+  getBackgroundImg() {
+    if(backdropPath == null) {
+      return 'https://pngimage.net/wp-content/uploads/2018/06/imagen-no-disponible-png-4.png';
+    }else {
+      return 'https://image.tmdb.org/t/p/w500/$backdropPath';
+    }
+  }
 }
