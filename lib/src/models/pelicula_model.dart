@@ -14,6 +14,8 @@ class Peliculas {
 }
 
 class Pelicula {
+  String uniqueId;
+
   double popularity;
   int voteCount;
   bool video;
@@ -54,7 +56,7 @@ class Pelicula {
     id              = json['id'];
     adult           = json['adult'];
     backdropPath    = json['backdrop_path'];
-    originalLanguage = json['original_language'];
+    originalLanguage= json['original_language'];
     originalTitle   = json['original_title'];
     genreIds        = json['genre_ids'].cast<int>();
     title           = json['title'];
