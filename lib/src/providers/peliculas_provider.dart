@@ -84,4 +84,13 @@ class PeliculasProvider {
 
     return await _procesarRespuesta(url);
   }
+
+  Future<List<Pelicula>> getPeliculasRelacionadas(String peliId) async{
+    final url = Uri.https(_url, '3/movie/$peliId/similar', {
+      'api_key'  : _apikey,
+      'languaje' : _language
+    });
+
+    return await _procesarRespuesta(url);
+  }
 }

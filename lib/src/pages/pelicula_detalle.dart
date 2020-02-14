@@ -18,10 +18,10 @@ class PeliculaDetalle extends StatelessWidget {
                 SizedBox(height: 15.0),
                 _posterTitulo(context, pelicula),
                 _descripcion(pelicula),
-                _descripcion(pelicula),
-                _descripcion(pelicula),
-                _descripcion(pelicula),
+                _titulo(context, 'Reparto'),
                 _crearCasting(pelicula),
+                _titulo(context, 'Otras personas también buscan'),
+                _peliculasRelacionadas(pelicula),
               ]
             )
           )
@@ -94,11 +94,19 @@ class PeliculaDetalle extends StatelessWidget {
 
   Widget _descripcion(Pelicula pelicula) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+      height: 250.0,
+      padding: EdgeInsets.only(left: 20.0, top: 25.0, right: 20.0),
       child: Text(
         pelicula.overview,
         textAlign: TextAlign.justify,
       ),
+    );
+  }
+
+  Widget _titulo(BuildContext context, String titulo) {
+    return Container(
+      padding: EdgeInsets.only(left: 15.0, bottom: 10.0),
+      child: Text(titulo, style: Theme.of(context).textTheme.subtitle)
     );
   }
 
@@ -142,12 +150,74 @@ class PeliculaDetalle extends StatelessWidget {
             child: FadeInImage(
               image: NetworkImage(actor.getFoto()),
               placeholder: AssetImage('assets/img/no-image.jpg'),
-              height: 150.0,
+              height: 170.0,
               fit: BoxFit.cover,
             ),
           ),
           Text(
             actor.name,
+            overflow: TextOverflow.ellipsis,
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _peliculasRelacionadas(Pelicula pelicula) {
+    final peliProvider = new PeliculasProvider();
+
+    return FutureBuilder(
+      future: peliProvider.getPeliculasRelacionadas(pelicula.id.toString()),
+      builder: (context, AsyncSnapshot<List> snapshot) {
+
+        if(snapshot.hasData) {
+          return _peliculasRelacionadasPageView(snapshot.data);
+        }else {
+          return Center(child: CircularProgressIndicator());
+        }
+
+      },
+    );
+  }
+
+  Widget _peliculasRelacionadasPageView(List<Pelicula> peliculas ) {
+    return SizedBox(
+      width: double.infinity,
+      height: 200.0,
+      child: PageView.builder(
+        pageSnapping: false,
+        controller: PageController(
+          viewportFraction: 0.3,
+          initialPage: 1
+        ),
+        itemCount: peliculas.length,
+        itemBuilder: (context, i) => _peliculasRelacionadasTarjeta(context, peliculas[i])
+      ),
+    );
+  }
+
+  Widget _peliculasRelacionadasTarjeta(BuildContext context, Pelicula pelicula) {
+    pelicula.uniqueId = '${pelicula.id}-prelacionada';
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Hero(
+            tag: pelicula.uniqueId,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: GestureDetector(
+                onTap: () => Navigator.pushNamed(context, 'detalle', arguments: pelicula),
+                child: FadeInImage(
+                  image: NetworkImage(pelicula.getPosterImg()),
+                  placeholder: AssetImage('assets/img/no-image.jpg'),
+                  height: 170.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          Text(
+            pelicula.title,
             overflow: TextOverflow.ellipsis,
           )
         ],
